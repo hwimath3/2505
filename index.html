@@ -3,664 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>극한 변형문제 퀴즈 - 2505</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>함수의 극한: 미정계수 활용 마스터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .progress-container {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-            height: 20px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .quiz-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-        }
-
-        .step-indicator {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .difficulty {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            margin-left: 10px;
-        }
-
-        .difficulty.easy { background: #e8f5e9; color: #2e7d32; }
-        .difficulty.medium { background: #fff3e0; color: #ef6c00; }
-        .difficulty.hard { background: #ffebee; color: #c62828; }
-
-        .question {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        .options {
-            display: grid;
-            gap: 12px;
-        }
-
-        .option {
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            font-size: 1.1rem;
-        }
-
-        .option:hover {
-            border-color: #667eea;
-            background: #f5f7ff;
-        }
-
-        .option.selected {
-            border-color: #667eea;
-            background: #e8ecff;
-        }
-
-        .option.correct {
-            border-color: #4CAF50;
-            background: #e8f5e9;
-        }
-
-        .option.incorrect {
-            border-color: #f44336;
-            background: #ffebee;
-        }
-
-        .option-marker {
-            width: 30px;
-            height: 30px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .option.selected .option-marker {
-            background: #667eea;
-            border-color: #667eea;
-            color: white;
-        }
-
-        .option.correct .option-marker {
-            background: #4CAF50;
-            border-color: #4CAF50;
-            color: white;
-        }
-
-        .option.incorrect .option-marker {
-            background: #f44336;
-            border-color: #f44336;
-            color: white;
-        }
-
-        .hint-box {
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 0 10px 10px 0;
-            display: none;
-        }
-
-        .hint-box.show {
-            display: block;
-        }
-
-        .solution-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 0 10px 10px 0;
-            display: none;
-            line-height: 1.8;
-        }
-
-        .solution-box.show {
-            display: block;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .result-card {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-
-        .result-card.show {
-            display: block;
-        }
-
-        .score-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            color: white;
-        }
-
-        .score-number {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-
-        .score-label {
-            font-size: 1rem;
-        }
-
-        .result-message {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .result-detail {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            .quiz-card {
-                padding: 20px;
-            }
-            .question {
-                font-size: 1rem;
-            }
-            .option {
-                padding: 12px 15px;
-                font-size: 1rem;
-            }
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .math-display { font-size: 1.1rem; margin: 1.5rem 0; padding: 1.2rem; background-color: #ffffff; border-left: 4px solid #3b82f6; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto; }
+        .concept-box { background-color: #eff6ff; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #dbeafe; }
+        .option-label { transition: all 0.2s; cursor: pointer; display: block; }
+        .option-label:hover { background-color: #eff6ff; transform: translateY(-2px); border-color: #3b82f6; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>극한 변형문제 퀴즈</h1>
-            <p>원본 문제를 기반으로 한 10단계 변형 문제</p>
+<body class="p-4 sm:p-8 md:p-12 text-slate-800">
+    <div id="app" class="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl p-6 sm:p-10 border border-slate-100">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-slate-900 mb-2">함수의 극한과 미정계수</h1>
+        <p class="text-center text-slate-500 mb-8">$\displaystyle\lim_{x \to a} \frac{f(x)}{x-a}$ 활용 마스터 10단계</p>
+
+        <!-- Study Page -->
+        <div id="page-study" class="page active">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2">핵심 원리</h2>
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">1. 극한값이 존재하는 조건</h3>
+                <p class="text-slate-700 mb-2">$\displaystyle\lim_{x \to a} \frac{f(x)}{x-a} = L$ (유한값)이 존재하려면</p>
+                <div class="math-display">
+                    $$ f(a) = 0 \text{ 이어야 함 (분자가 0이 되어야 약분 가능)} $$
+                </div>
+            </div>
+            <div class="concept-box">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">2. 인수분해 활용</h3>
+                <p class="text-slate-700 mb-2">$x^2 - 1 = (x+1)(x-1)$을 이용하여 분모를 변형합니다.</p>
+                <div class="math-display">
+                    $$ \lim_{x \to -1} \frac{f(x)^2 + 2f(x)}{x^2 - 1} = \lim_{x \to -1} \frac{f(x)(f(x) + 2)}{(x+1)(x-1)} $$
+                </div>
+            </div>
+            <div class="concept-box bg-amber-50 border-amber-200">
+                <h3 class="text-xl font-bold text-amber-600 mb-3">오늘의 문제</h3>
+                <p class="text-slate-700">$\displaystyle\lim_{x \to -1} \frac{f(x) + 2}{x + 1} = 4$일 때,</p>
+                <div class="math-display border-amber-400">
+                    $$ \lim_{x \to -1} \frac{\{f(x)\}^2 + 2f(x)}{x^2 - 1} \text{의 값은?} $$
+                </div>
+            </div>
+            <div class="mt-8 mb-4">
+                <label for="username-input" class="block text-sm font-medium text-slate-600 mb-1">학생 이름</label>
+                <input type="text" id="username-input" placeholder="이름을 입력하세요" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition shadow-sm outline-none">
+            </div>
+            <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl mt-2 transition duration-300 shadow-lg transform hover:scale-[1.01]">
+                문제 풀이 시작하기
+            </button>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar" style="width: 10%">1/10</div>
-        </div>
-
-        <div class="quiz-card" id="quizCard">
-            <div id="stepIndicator" class="step-indicator">STEP 1</div>
-            <span id="difficulty" class="difficulty easy">기초</span>
-
-            <div class="question" id="question"></div>
-
-            <div class="options" id="options"></div>
-
-            <div class="hint-box" id="hintBox">
-                <strong>힌트:</strong> <span id="hintText"></span>
+        <!-- Quiz Page -->
+        <div id="page-quiz" class="page">
+            <div id="quiz-header" class="mb-6">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-lg font-bold text-blue-700">Step <span id="current-q-number">1</span></span>
+                    <span class="text-sm text-slate-400">Total 10 Questions</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2">
+                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
             </div>
-
-            <div class="solution-box" id="solutionBox">
-                <strong>풀이:</strong><br>
-                <span id="solutionText"></span>
+            <div id="question-area" class="min-h-[250px] p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                <p id="question-text" class="text-xl font-medium text-slate-800 mb-8 leading-relaxed"></p>
+                <div id="options-container" class="space-y-3"></div>
             </div>
-
-            <div class="btn-container">
-                <button class="btn btn-secondary" id="hintBtn" onclick="showHint()">힌트 보기</button>
-                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>정답 확인</button>
-                <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQuestion()">다음 문제</button>
+            <div id="feedback" class="mt-6 p-4 rounded-xl text-white font-semibold hidden"></div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="prevQuestion()" id="prev-btn" class="hidden px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-xl transition shadow-sm">이전</button>
+                <button onclick="submitAnswer()" id="submit-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition shadow-md">정답 확인</button>
+                <button onclick="nextQuestion()" id="next-btn" class="hidden flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-md">다음 단계</button>
             </div>
         </div>
 
-        <div class="quiz-card result-card" id="resultCard">
-            <div class="score-circle">
-                <div class="score-number" id="finalScore">0</div>
-                <div class="score-label">/ 10</div>
+        <!-- Result Page -->
+        <div id="page-results" class="page text-center p-8">
+            <div class="mb-6 text-6xl animate-pulse">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-800 mb-2">학습 완료!</h2>
+            <div class="text-7xl font-black text-blue-600 my-8">
+                <span id="final-score">0</span><span class="text-3xl text-slate-400">/10</span>
             </div>
-            <div class="result-message" id="resultMessage"></div>
-            <div class="result-detail" id="resultDetail"></div>
-            <button class="btn btn-primary" onclick="restartQuiz()">다시 풀기</button>
+            <div id="upload-status" class="text-sm text-slate-500 mb-8 h-6 font-medium">결과 저장 중...</div>
+            <button onclick="window.location.reload()" class="bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 font-bold py-3 px-8 rounded-xl transition shadow-sm">다시 도전하기</button>
         </div>
     </div>
 
     <script>
-        const quizData = [
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzB5ALdepM0Tu4II9BeHGDAdaC0qd2OXJp6Ofubwjc2FZ5f1aChz9ZCb1lBxkp12Xy2/exec';
+        let currentQuestionIndex = 0;
+        let userName = "";
+        let userAnswers = [];
+
+        const questions = [
             {
-                step: 1,
-                difficulty: "easy",
-                difficultyText: "기초",
-                question: `\\(\\lim_{x \\to 1} \\frac{f(x) - 3}{x - 1} = 5\\)일 때, \\(f(1)\\)의 값은?`,
-                options: ["0", "1", "2", "3", "5"],
-                answer: 3,
-                hint: "극한이 존재하려면 분모가 0일 때 분자도 0이어야 합니다.",
-                solution: `\\(x \\to 1\\)일 때 분모 \\(x-1 \\to 0\\)이고 극한값이 5(유한값)이므로,<br>
-                분자도 0이어야 합니다.<br>
-                따라서 \\(f(1) - 3 = 0\\), 즉 \\(f(1) = 3\\)`
+                q: "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4$가 유한값으로 존재하려면 $f(-1)$의 값은?",
+                options: ["$-2$", "$2$", "$0$", "$4$"],
+                ans: "$-2$",
+                exp: "분모가 0이 되므로 분자도 0이어야 합니다. $f(-1) + 2 = 0$에서 $f(-1) = -2$입니다."
             },
             {
-                step: 2,
-                difficulty: "easy",
-                difficultyText: "기초",
-                question: `\\(\\lim_{x \\to 2} \\frac{f(x) + 4}{x - 2} = 3\\)일 때, \\(f(2)\\)의 값은?`,
-                options: ["-6", "-4", "-2", "0", "4"],
-                answer: 1,
-                hint: "분모가 0으로 가고 극한이 유한값이면 분자도 0으로 가야 합니다.",
-                solution: `극한이 유한값 3이고 \\(x \\to 2\\)일 때 분모가 0이므로,<br>
-                분자 \\(f(2) + 4 = 0\\)<br>
-                따라서 \\(f(2) = -4\\)`
+                q: "$x^2 - 1$을 인수분해하면?",
+                options: ["$(x+1)(x-1)$", "$(x-1)^2$", "$(x+1)^2$", "$x(x-1)$"],
+                ans: "$(x+1)(x-1)$",
+                exp: "$x^2 - 1 = (x+1)(x-1)$입니다. (합차공식)"
             },
             {
-                step: 3,
-                difficulty: "easy",
-                difficultyText: "기초",
-                question: `\\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)일 때, \\(f(-1)\\)의 값은?`,
-                options: ["-4", "-2", "0", "2", "4"],
-                answer: 1,
-                hint: "이것이 원본 문제의 조건입니다!",
-                solution: `극한이 유한값 4이고 \\(x \\to -1\\)일 때 분모가 0이므로,<br>
-                분자 \\(f(-1) + 2 = 0\\)<br>
-                따라서 \\(f(-1) = -2\\)`
+                q: "$\\{f(x)\\}^2 + 2f(x)$를 인수분해하면?",
+                options: ["$f(x)(f(x) + 2)$", "$(f(x) + 1)^2$", "$f(x)^2 + 2$", "$(f(x) + 2)^2$"],
+                ans: "$f(x)(f(x) + 2)$",
+                exp: "$f(x)$를 공통인수로 묶으면 $f(x)(f(x) + 2)$입니다."
             },
             {
-                step: 4,
-                difficulty: "medium",
-                difficultyText: "중급",
-                question: `\\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)이고 \\(f(-1) = -2\\)일 때,<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x^2 - 1}\\)의 값은?`,
-                options: ["-4", "-2", "0", "2", "4"],
-                answer: 1,
-                hint: "\\(x^2 - 1 = (x+1)(x-1)\\)로 인수분해하세요.",
-                solution: `\\(x^2 - 1 = (x+1)(x-1)\\)이므로,<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x) + 2}{(x+1)(x-1)} = \\lim_{x \\to -1} \\frac{f(x) + 2}{x+1} \\cdot \\frac{1}{x-1}\\)<br>
-                \\(= 4 \\times \\frac{1}{-1-1} = 4 \\times \\frac{1}{-2} = -2\\)`
+                q: "구하는 극한을 변형하면 $\\displaystyle\\lim_{x \\to -1} \\frac{f(x)(f(x) + 2)}{(x+1)(x-1)}$입니다. 이를 어떻게 분리할 수 있나요?",
+                options: ["$\\displaystyle\\lim_{x \\to -1} \\frac{f(x)}{x-1} \\cdot \\frac{f(x)+2}{x+1}$", "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x)}{x+1} \\cdot \\frac{f(x)+2}{x-1}$", "$\\displaystyle\\lim_{x \\to -1} f(x) \\cdot \\frac{f(x)+2}{x^2-1}$", "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x)+2}{x+1} \\cdot \\frac{f(x)}{x-1}$"],
+                ans: "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x)+2}{x+1} \\cdot \\frac{f(x)}{x-1}$",
+                exp: "$(x+1)$은 $\\frac{f(x)+2}{x+1}$와 묶고, $(x-1)$은 $f(x)$와 묶습니다."
             },
             {
-                step: 5,
-                difficulty: "medium",
-                difficultyText: "중급",
-                question: `\\(f(-1) = -2\\)일 때, \\(\\{f(x)\\}^2 + 2f(x)\\)를 \\(f(x)\\)로 인수분해하면?`,
-                options: ["\\(f(x)(f(x) + 2)\\)", "\\((f(x) + 1)^2\\)", "\\(f(x)(f(x) - 2)\\)", "\\((f(x))^2 + 2\\)", "\\((f(x) + 2)^2\\)"],
-                answer: 0,
-                hint: "\\(f(x)\\)를 공통인수로 묶어보세요.",
-                solution: `\\(\\{f(x)\\}^2 + 2f(x) = f(x) \\cdot f(x) + 2f(x)\\)<br>
-                \\(= f(x)(f(x) + 2)\\)<br>
-                \\(f(-1) = -2\\)를 대입하면 \\((-2)(-2+2) = 0\\)으로 확인됩니다.`
+                q: "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1}$의 값은?",
+                options: ["$4$", "$-4$", "$2$", "$-2$"],
+                ans: "$4$",
+                exp: "문제에서 주어진 조건입니다."
             },
             {
-                step: 6,
-                difficulty: "medium",
-                difficultyText: "중급",
-                question: `\\(f(-1) = -2\\)이고 \\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)일 때,<br>
-                \\(\\lim_{x \\to -1} f(x)\\)의 값은?`,
-                options: ["-4", "-2", "0", "2", "4"],
-                answer: 1,
-                hint: "연속성을 생각해보세요.",
-                solution: `\\(f(-1) = -2\\)이고 극한이 존재하려면<br>
-                \\(\\lim_{x \\to -1} f(x) = f(-1) = -2\\)이어야 합니다.`
+                q: "$\\displaystyle\\lim_{x \\to -1} \\frac{f(x)}{x - 1}$에서 $f(-1) = -2$이므로 이 값은?",
+                options: ["$\\frac{-2}{-2} = 1$", "$\\frac{-2}{-1-1} = 1$", "$\\frac{-2}{0}$ = 발산", "$\\frac{-2}{2} = -1$"],
+                ans: "$\\frac{-2}{-2} = 1$",
+                exp: "$x \\to -1$일 때 $f(x) \\to -2$, $x-1 \\to -2$이므로 $\\frac{-2}{-2} = 1$입니다."
             },
             {
-                step: 7,
-                difficulty: "hard",
-                difficultyText: "심화",
-                question: `\\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)이고 \\(f(-1) = -2\\)일 때,<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)}{x + 1}\\)의 값은?`,
-                options: ["0", "2", "4", "6", "존재하지 않음"],
-                answer: 4,
-                hint: "\\(\\frac{f(x)}{x+1} = \\frac{f(x)+2}{x+1} - \\frac{2}{x+1}\\)로 분리해보세요.",
-                solution: `\\(\\frac{f(x)}{x+1} = \\frac{f(x)+2}{x+1} - \\frac{2}{x+1}\\)<br>
-                \\(x \\to -1\\)일 때 첫 번째 항은 4로 수렴하지만,<br>
-                두 번째 항 \\(\\frac{2}{x+1}\\)은 발산합니다.<br>
-                따라서 극한은 존재하지 않습니다.`
+                q: "따라서 $\\displaystyle\\lim_{x \\to -1} \\frac{\\{f(x)\\}^2 + 2f(x)}{x^2 - 1}$의 값은?",
+                options: ["$4 \\times 1 = 4$", "$4 \\times (-1) = -4$", "$4 + 1 = 5$", "$4 - 1 = 3$"],
+                ans: "$4 \\times 1 = 4$",
+                exp: "$\\frac{f(x)+2}{x+1} \\cdot \\frac{f(x)}{x-1} = 4 \\times 1 = 4$입니다."
             },
             {
-                step: 8,
-                difficulty: "hard",
-                difficultyText: "심화",
-                question: `\\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)이고 \\(f(-1) = -2\\)일 때,<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)(f(x) + 2)}{(x + 1)^2}\\)의 값은?`,
-                options: ["-16", "-8", "8", "16", "존재하지 않음"],
-                answer: 4,
-                hint: "\\(\\frac{f(x)(f(x)+2)}{(x+1)^2} = \\frac{f(x)}{x+1} \\cdot \\frac{f(x)+2}{x+1}\\)",
-                solution: `\\(\\frac{f(x)(f(x)+2)}{(x+1)^2} = \\frac{f(x)}{x+1} \\cdot \\frac{f(x)+2}{x+1}\\)<br>
-                앞에서 \\(\\frac{f(x)}{x+1}\\)의 극한이 존재하지 않으므로,<br>
-                이 극한도 존재하지 않습니다.`
+                q: "**[유사 변형]** $\\displaystyle\\lim_{x \\to 2} \\frac{f(x) - 3}{x - 2} = 5$일 때, $f(2)$의 값은?",
+                options: ["$3$", "$5$", "$2$", "$0$"],
+                ans: "$3$",
+                exp: "극한이 존재하려면 $f(2) - 3 = 0$이어야 하므로 $f(2) = 3$입니다."
             },
             {
-                step: 9,
-                difficulty: "hard",
-                difficultyText: "심화",
-                question: `\\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)이고 \\(f(-1) = -2\\)일 때,<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)(f(x) + 2)}{(x + 1)(x - 1)}\\)의 값은?`,
-                options: ["-8", "-4", "4", "8", "존재하지 않음"],
-                answer: 4,
-                hint: "\\(\\frac{f(x)}{x-1}\\)은 \\(x=-1\\)에서 어떻게 되나요?",
-                solution: `\\(\\frac{f(x)(f(x)+2)}{(x+1)(x-1)} = \\frac{f(x)}{x-1} \\cdot \\frac{f(x)+2}{x+1}\\)<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)}{x-1} = \\frac{-2}{-2} = 1\\) (직접대입 가능)<br>
-                하지만! \\(\\frac{f(x)}{x-1}\\)의 극한은 \\(\\frac{f(-1)}{-1-1} = \\frac{-2}{-2} = 1\\)이지만<br>
-                \\(\\frac{f(x)}{x+1}\\)의 극한이 존재하지 않으므로 결합해서 생각해야 합니다.<br>
-                실제로 \\(\\frac{f(x)}{x-1}\\)은 연속이지만 \\(\\frac{f(x)}{x+1}\\)이 발산하므로<br>
-                전체 극한은 존재하지 않습니다.`
+                q: "**[응용]** $\\displaystyle\\lim_{x \\to 1} \\frac{f(x) + 1}{x - 1} = 3$일 때, $\\displaystyle\\lim_{x \\to 1} \\frac{f(x)^2 + f(x)}{x^2 - 1}$의 값은?",
+                options: ["$\\frac{3}{2}$", "$3$", "$-\\frac{3}{2}$", "$-3$"],
+                ans: "$-\\frac{3}{2}$",
+                exp: "$f(1) = -1$이고, 분자 $= f(x)(f(x)+1)$, 분모 $= (x-1)(x+1)$. $\\frac{f(x)+1}{x-1} \\cdot \\frac{f(x)}{x+1} = 3 \\times \\frac{-1}{2} = -\\frac{3}{2}$"
             },
             {
-                step: 10,
-                difficulty: "hard",
-                difficultyText: "원본",
-                question: `<strong>[원본 문제]</strong><br>
-                \\(\\lim_{x \\to -1} \\frac{f(x) + 2}{x + 1} = 4\\)일 때,<br>
-                \\(\\lim_{x \\to -1} \\frac{\\{f(x)\\}^2 + 2f(x)}{x^2 - 1}\\)의 값은?`,
-                options: ["-4", "-2", "2", "4", "6"],
-                answer: 1,
-                hint: "분자를 \\(f(x)(f(x)+2)\\)로, 분모를 \\((x+1)(x-1)\\)로 인수분해하세요.",
-                solution: `<strong>Step 1:</strong> \\(f(-1) = -2\\) (분모가 0이고 극한이 유한이므로)<br><br>
-                <strong>Step 2:</strong> 분자 인수분해<br>
-                \\(\\{f(x)\\}^2 + 2f(x) = f(x)(f(x) + 2)\\)<br><br>
-                <strong>Step 3:</strong> 분모 인수분해<br>
-                \\(x^2 - 1 = (x+1)(x-1)\\)<br><br>
-                <strong>Step 4:</strong> 극한 계산<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)(f(x)+2)}{(x+1)(x-1)}\\)<br>
-                \\(= \\lim_{x \\to -1} \\frac{f(x)}{x-1} \\cdot \\lim_{x \\to -1} \\frac{f(x)+2}{x+1}\\)<br>
-                \\(= \\frac{-2}{-2} \\times 4 = 1 \\times 4 = 4\\)...?<br><br>
-                <strong>잠깐!</strong> 다시 확인해보면:<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)}{x-1} = \\frac{f(-1)}{-1-1} = \\frac{-2}{-2} = 1\\)<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)+2}{x+1} = 4\\)<br>
-                따라서 \\(1 \\times 4 = 4\\)? 아닙니다!<br><br>
-                <strong>정확한 풀이:</strong><br>
-                \\(\\frac{f(x)(f(x)+2)}{(x+1)(x-1)} = \\frac{f(x)}{x-1} \\cdot \\frac{f(x)+2}{x+1}\\)<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)}{x-1} = \\frac{-2}{-2} = 1\\)이 아니라<br>
-                \\(x \\to -1\\)일 때 분자분모 모두 유한값으로 직접대입:<br>
-                \\(\\frac{-2}{-1-1} = \\frac{-2}{-2} = 1\\)<br>
-                따라서 \\(\\lim = 1 \\times 4 = 4\\)?<br><br>
-                <strong>실제 정답:</strong> \\(-2\\)<br>
-                (분모의 \\(x-1\\) 때문에 \\(\\frac{1}{-2}\\) 추가 곱해져서)<br>
-                \\(4 \\times \\frac{-2}{-2} = 4 \\times 1\\)이 아니라<br>
-                \\(\\frac{f(-1)}{-2} \\times 4 = \\frac{-2}{-2} \\times 4 = -2\\) (부호 주의!)<br>
-                정리: \\(\\lim_{x \\to -1} \\frac{f(x)}{x-1} = \\frac{-2}{-2} = 1\\)이지만<br>
-                전체 식에서 \\(x-1 \\to -2\\)이므로<br>
-                \\(\\lim = 4 \\times \\frac{-2}{-2} = 4\\)? 아! <br>
-                \\(= 4 \\times \\frac{f(-1)}{-2} = 4 \\times \\frac{-2}{-2} = 4 \\times 1 = 4\\)...<br><br>
-                <strong>최종:</strong> 분리해서 계산하면<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)+2}{x+1} \\cdot \\lim_{x \\to -1} \\frac{f(x)}{x-1} = 4 \\times 1 = 4\\)<br>
-                그러나 \\(\\lim_{x \\to -1} f(x) = -2\\)이고<br>
-                \\(\\lim_{x \\to -1} (x-1) = -2\\)이므로<br>
-                \\(\\lim_{x \\to -1} \\frac{f(x)}{x-1} = \\frac{-2}{-2} = 1\\)<br>
-                따라서 최종 답: \\(4 \\times 1 = 4\\)인데...<br><br>
-                출제 의도상 정답은 \\(-2\\)입니다.<br>
-                이유: \\(\\frac{f(x)(f(x)+2)}{x^2-1} = \\frac{f(x)}{x-1} \\cdot \\frac{f(x)+2}{x+1}\\)에서<br>
-                \\(= \\frac{-2}{-2} \\times 4 = 1 \\times 4 = 4\\)...가 아니라<br>
-                \\(\\lim \\frac{f(x)}{x-1} = \\frac{-2}{-2} = 1\\)이고 (분자분모 직접대입)<br>
-                하지만 부호를 다시 체크하면... \\(x-1|_{x=-1} = -1-1 = -2\\)<br>
-                \\(\\therefore 4 \\cdot 1 = 4\\) (X) → 재검토 필요<br>
-                <strong>\\(\\therefore\\) 정답: -2</strong>`
+                q: "**[심화]** 원래 문제의 정답은?",
+                options: ["① $-4$", "② $-2$", "③ $2$", "④ $4$"],
+                ans: "④ $4$",
+                exp: "$f(-1) = -2$, $\\frac{f(x)+2}{x+1} \\to 4$, $\\frac{f(x)}{x-1} \\to \\frac{-2}{-2} = 1$. 따라서 $4 \\times 1 = 4$입니다."
             }
         ];
 
-        let currentQuestion = 0;
-        let score = 0;
-        let selectedOption = null;
-        let answered = false;
+        userAnswers = new Array(questions.length).fill(null);
 
-        function loadQuestion() {
-            const q = quizData[currentQuestion];
-            document.getElementById('stepIndicator').textContent = `STEP ${q.step}`;
-            document.getElementById('difficulty').textContent = q.difficultyText;
-            document.getElementById('difficulty').className = `difficulty ${q.difficulty}`;
-            document.getElementById('question').innerHTML = q.question;
-            document.getElementById('hintText').innerHTML = q.hint;
-            document.getElementById('solutionText').innerHTML = q.solution;
-
-            const optionsContainer = document.getElementById('options');
-            optionsContainer.innerHTML = '';
-
-            const labels = ['①', '②', '③', '④', '⑤'];
-            q.options.forEach((opt, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.innerHTML = `
-                    <span class="option-marker">${labels[index]}</span>
-                    <span>${opt}</span>
-                `;
-                optionDiv.onclick = () => selectOption(index);
-                optionsContainer.appendChild(optionDiv);
+        function renderMath(element) {
+            renderMathInElement(element || document.body, {
+                delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
+                throwOnError: false
             });
-
-            // Reset states
-            selectedOption = null;
-            answered = false;
-            document.getElementById('hintBox').classList.remove('show');
-            document.getElementById('solutionBox').classList.remove('show');
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
-            document.getElementById('hintBtn').disabled = false;
-
-            // Update progress
-            const progress = ((currentQuestion + 1) / quizData.length) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            document.getElementById('progressBar').textContent = `${currentQuestion + 1}/${quizData.length}`;
-
-            // Re-render MathJax
-            if (window.MathJax) {
-                MathJax.typesetPromise();
-            }
         }
 
-        function selectOption(index) {
-            if (answered) return;
-
-            selectedOption = index;
-            const options = document.querySelectorAll('.option');
-            options.forEach((opt, i) => {
-                opt.classList.remove('selected');
-                if (i === index) opt.classList.add('selected');
-            });
-            document.getElementById('submitBtn').disabled = false;
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        function showHint() {
-            document.getElementById('hintBox').classList.add('show');
-            document.getElementById('hintBtn').disabled = true;
-            if (window.MathJax) {
-                MathJax.typesetPromise();
-            }
-        }
-
-        function submitAnswer() {
-            if (selectedOption === null || answered) return;
-
-            answered = true;
-            const q = quizData[currentQuestion];
-            const options = document.querySelectorAll('.option');
-
-            options.forEach((opt, i) => {
-                opt.classList.remove('selected');
-                if (i === q.answer) {
-                    opt.classList.add('correct');
-                } else if (i === selectedOption) {
-                    opt.classList.add('incorrect');
-                }
-            });
-
-            if (selectedOption === q.answer) {
-                score++;
-            }
-
-            document.getElementById('solutionBox').classList.add('show');
-            document.getElementById('submitBtn').classList.add('hidden');
-            document.getElementById('nextBtn').classList.remove('hidden');
-
-            if (currentQuestion === quizData.length - 1) {
-                document.getElementById('nextBtn').textContent = '결과 보기';
-            }
-
-            if (window.MathJax) {
-                MathJax.typesetPromise();
-            }
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-
-            if (currentQuestion >= quizData.length) {
-                showResult();
-            } else {
-                loadQuestion();
-            }
-        }
-
-        function showResult() {
-            document.getElementById('quizCard').style.display = 'none';
-            document.getElementById('resultCard').classList.add('show');
-            document.getElementById('finalScore').textContent = score;
-
-            let message, detail;
-            if (score === 10) {
-                message = '완벽합니다!';
-                detail = '모든 문제를 맞추셨습니다. 극한의 개념을 완벽하게 이해하고 계시네요!';
-            } else if (score >= 8) {
-                message = '훌륭합니다!';
-                detail = '극한의 핵심 개념을 잘 이해하고 계시네요. 조금만 더 연습하면 완벽해질 거예요!';
-            } else if (score >= 6) {
-                message = '잘하셨어요!';
-                detail = '기본 개념은 이해하고 계시네요. 심화 문제를 더 연습해보세요.';
-            } else if (score >= 4) {
-                message = '조금 더 노력이 필요해요';
-                detail = '기본 개념을 다시 복습해보시면 좋겠어요.';
-            } else {
-                message = '기초부터 다시 시작해볼까요?';
-                detail = '극한의 기본 개념부터 차근차근 복습해보세요.';
-            }
-
-            document.getElementById('resultMessage').textContent = message;
-            document.getElementById('resultDetail').textContent = detail;
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            document.getElementById('quizCard').style.display = 'block';
-            document.getElementById('resultCard').classList.remove('show');
+        function startQuiz() {
+            userName = document.getElementById('username-input').value.trim();
+            if (!userName) return alert("이름을 입력해주세요!");
+            showPage('page-quiz');
             loadQuestion();
         }
 
-        // Initialize
-        loadQuestion();
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('current-q-number').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerHTML = q.q;
+            document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+
+            const optContainer = document.getElementById('options-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const feedbackDiv = document.getElementById('feedback');
+
+            optContainer.innerHTML = '';
+            const existingAnswer = userAnswers[currentQuestionIndex];
+
+            q.options.forEach(opt => {
+                const label = document.createElement('label');
+                label.className = "option-label block p-4 bg-white border border-slate-200 rounded-xl shadow-sm";
+                const isChecked = existingAnswer && existingAnswer.selected === opt;
+                label.innerHTML = `<div class="flex items-center"><input type="radio" name="quiz-opt" value="${opt}" class="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3" ${isChecked ? 'checked' : ''} ${existingAnswer ? 'disabled' : ''}><span class="text-lg ${existingAnswer ? 'text-slate-600' : ''}">${opt}</span></div>`;
+                optContainer.appendChild(label);
+            });
+
+            prevBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+
+            if (existingAnswer) {
+                showFeedbackUI(existingAnswer.isCorrect, q.ans, q.exp);
+                submitBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                feedbackDiv.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+                nextBtn.classList.add('hidden');
+            }
+            renderMath(document.getElementById('question-area'));
+        }
+
+        function showFeedbackUI(isCorrect, ans, exp) {
+            const fb = document.getElementById('feedback');
+            fb.classList.remove('hidden');
+            fb.className = `mt-6 p-5 rounded-xl text-white shadow-lg ${isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}`;
+            fb.innerHTML = `<div class="flex items-center mb-2"><span class="text-2xl mr-2">${isCorrect ? '🎉' : '❌'}</span><span class="text-lg font-bold">${isCorrect ? "정답입니다!" : "아쉽네요."}</span></div>${!isCorrect ? `<div class="mb-2">정답: <strong>${ans}</strong></div>` : ''}<div class="text-sm font-normal opacity-90 border-t border-white/20 pt-2 mt-2 leading-relaxed">${exp}</div>`;
+            renderMath(fb);
+        }
+
+        function submitAnswer() {
+            const selected = document.querySelector('input[name="quiz-opt"]:checked');
+            if (!selected) return alert("보기를 선택해주세요!");
+            const q = questions[currentQuestionIndex];
+            const clean = (s) => s.replace(/\s/g, '');
+            const isCorrect = clean(selected.value) === clean(q.ans);
+            userAnswers[currentQuestionIndex] = { selected: selected.value, isCorrect: isCorrect };
+            showFeedbackUI(isCorrect, q.ans, q.exp);
+            document.querySelectorAll('input[name="quiz-opt"]').forEach(r => r.disabled = true);
+            document.getElementById('submit-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) { currentQuestionIndex--; loadQuestion(); }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) { loadQuestion(); } else { finishQuiz(); }
+        }
+
+        function finishQuiz() {
+            showPage('page-results');
+            const finalScore = userAnswers.filter(a => a && a.isCorrect).length;
+            const scoreDisplay = document.getElementById('final-score');
+            let currentDisplayScore = 0;
+            const interval = setInterval(() => {
+                if (currentDisplayScore >= finalScore) { clearInterval(interval); scoreDisplay.textContent = finalScore; }
+                else { currentDisplayScore++; scoreDisplay.textContent = currentDisplayScore; }
+            }, 100);
+            if(finalScore === 0) scoreDisplay.textContent = 0;
+            sendResult(finalScore);
+        }
+
+        function sendResult(finalScore) {
+            const status = document.getElementById('upload-status');
+            const data = { name: userName, score: finalScore, quizTitle: "2505-미정계수극한", date: new Date().toLocaleString() };
+            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+            .then(() => { status.textContent = "결과가 안전하게 저장되었습니다."; status.classList.replace('text-slate-500', 'text-emerald-600'); })
+            .catch(() => { status.textContent = "결과 저장에 실패했습니다."; status.classList.replace('text-slate-500', 'text-rose-600'); });
+        }
+
+        window.onload = () => renderMath();
     </script>
 </body>
 </html>
